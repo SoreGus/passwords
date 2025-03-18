@@ -2,7 +2,7 @@ import SwiftData
 import Foundation
 
 @Model
-class PasswordRecord: Identifiable {
+class Password: Identifiable {
     @Attribute(.unique) var id: UUID = UUID()
     var domain: String
     var email: String
@@ -10,9 +10,9 @@ class PasswordRecord: Identifiable {
     var encryptedPassword: Data
     var createdAt: Date
     var accessHistory: [Date]
-    var group: GroupRecord?
+    var group: Group?
     
-    init(domain: String, email: String, username: String, encryptedPassword: Data, group: GroupRecord?) {
+    init(domain: String, email: String, username: String, encryptedPassword: Data, group: Group?) {
         self.domain = domain
         self.email = email
         self.username = username

@@ -3,26 +3,23 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var passwordRecords: [PasswordRecord]
-    @Query private var groups: [GroupRecord]
+    @Query private var passwordRecords: [Password]
+    @Query private var groups: [Group]
     
     @State private var searchText = ""
     @State private var expandedGroups: Set<UUID> = []
-    @State private var isDeleteMode = false
     @State private var showDeleteConfirmation = false
-    @State private var groupToDelete: GroupRecord?
-    @State private var navigateToAddGroup = false  // Controla a navegação para adicionar grupo
-    
-    var filteredRecords: [PasswordRecord] {
+    @State private var groupToDelete: Group?
+
+    var filteredRecords: [Password] {
         if searchText.isEmpty {
             return passwordRecords
         }
         return passwordRecords.filter { $0.domain.localizedCaseInsensitiveContains(searchText) }
     }
-    
+
     var body: some View {
         NavigationView {
-            
             List {
                 NavigationLink(destination: AddPasswordView()) {
                     Text("New Password")
@@ -37,11 +34,11 @@ struct ContentView: View {
                 }
                 .listRowBackground(Color.clear)
                 .padding(.vertical, 5)
-        
+
                 ForEach(groups) { group in
                     let isExpanded = expandedGroups.contains(group.id)
-                    
-                    Section(header: GroupHeaderView(group: group, expandedGroups: $expandedGroups, isDeleteMode: isDeleteMode, deleteGroupAction: confirmDeleteGroup)) {
+
+                    Section {
                         if isExpanded {
                             ForEach(filteredRecords.filter { $0.group?.id == group.id }) { record in
                                 NavigationLink(destination: PasswordRegisterView(record: record)) {
@@ -57,10 +54,37 @@ struct ContentView: View {
                             }
                             .transition(.opacity)
                         }
+                    } header: {
+                        HStack {
+                            Text(group.name)
+                                .font(.headline)
+                            Spacer()
+                            Button(action: {
+                                withAnimation {
+                                    if isExpanded {
+                                        expandedGroups.remove(group.id)
+                                    } else {
+                                        expandedGroups.insert(group.id)
+                                    }
+                                }
+                            }) {
+                                Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding(.vertical, 5)
+                        .swipeActions {
+                            Button(role: .destructive) {
+                                confirmDeleteGroup(group)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
                     .listRowBackground(isExpanded ? Color.blue.opacity(0.15) : Color.clear)
                     .animation(.easeInOut(duration: 0.25), value: isExpanded)
                 }
+
                 if !filteredRecords.filter({ $0.group == nil }).isEmpty {
                     Section(header: Text("No Group")) {
                         ForEach(filteredRecords.filter { $0.group == nil }) { record in
@@ -77,7 +101,6 @@ struct ContentView: View {
                         }
                     }
                 }
-                
             }
             .searchable(text: $searchText)
             .navigationTitle("Passwords")
@@ -102,17 +125,17 @@ struct ContentView: View {
             }
         }
     }
-    
-    private func deletePassword(_ record: PasswordRecord) {
+
+    private func deletePassword(_ record: Password) {
         modelContext.delete(record)
     }
-    
-    private func confirmDeleteGroup(_ group: GroupRecord) {
+
+    private func confirmDeleteGroup(_ group: Group) {
         groupToDelete = group
         showDeleteConfirmation = true
     }
-    
-    private func deleteGroup(_ group: GroupRecord) {
+
+    private func deleteGroup(_ group: Group) {
         for record in passwordRecords where record.group?.id == group.id {
             record.group = nil
         }

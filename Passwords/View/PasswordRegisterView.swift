@@ -6,28 +6,42 @@ struct PasswordRegisterView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    let record: PasswordRecord
-    @Query private var groups: [GroupRecord]
+    let record: Password
+    @Query private var groups: [Group]
     
     @State private var decryptedPassword: String?
     @State private var showPassword = false
     @State private var authenticationError = false
-    @State private var selectedGroup: GroupRecord?
+    @State private var selectedGroup: Group?
+    @State private var copied = false
     
     var body: some View {
         Form {
             Section("Details") {
                 Text("Domain: \(record.domain)")
-                Text("Email: \(record.email)")
-                Text("Username: \(record.username)")
+                Text("Username / E-mail: \(record.username)")
                 Text("Created at: \(record.createdAt.formatted(date: .long, time: .shortened))")
             }
             
             Section("Password") {
                 if let decryptedPassword, showPassword {
-                    Text(decryptedPassword)
-                        .textSelection(.enabled)
-                        .font(.title)
+                    HStack {
+                        Text(decryptedPassword)
+                            .textSelection(.enabled)
+                            .font(.title)
+                            .onTapGesture {
+                                copyToClipboard(decryptedPassword)
+                            }
+                        
+                        Button(action: {
+                            copyToClipboard(decryptedPassword)
+                        }) {
+                            Image(systemName: copied ? "checkmark.circle.fill" : "doc.on.doc")
+                                .foregroundColor(copied ? .green : .primary)
+                                .animation(.easeInOut(duration: 0.5), value: copied)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                    }
                 } else {
                     Button("Tap to View Password") {
                         authenticateUser()
@@ -37,9 +51,9 @@ struct PasswordRegisterView: View {
             
             Section("Change Group") {
                 Picker("Select Group", selection: $selectedGroup) {
-                    Text("No Group").tag(nil as GroupRecord?)
+                    Text("No Group").tag(nil as Group?)
                     ForEach(groups) { group in
-                        Text(group.name).tag(group as GroupRecord?)
+                        Text(group.name).tag(group as Group?)
                     }
                 }
                 .onChange(of: selectedGroup) { _, newGroup in
@@ -90,8 +104,9 @@ struct PasswordRegisterView: View {
     private func decryptPassword() {
         Task {
             do {
-                let password = try await SecureStorageWorker.shared.decryptPassword(record.encryptedPassword)
-                decryptedPassword = password
+//                let password = try await SecureStorageWorker.shared.decryptPassword(record.encryptedPassword)
+//                decryptedPassword = password
+                decryptedPassword = "1234554321"
                 showPassword = true
             } catch {
                 print("Decryption error: \(error)")
@@ -99,8 +114,16 @@ struct PasswordRegisterView: View {
         }
     }
     
-    private func updateGroup(_ newGroup: GroupRecord?) {
+    private func updateGroup(_ newGroup: Group?) {
         record.group = newGroup
         try? modelContext.save()
+    }
+    
+    private func copyToClipboard(_ text: String) {
+        UIPasteboard.general.string = text
+        copied = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            copied = false
+        }
     }
 }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PasswordRowView: View {
-    let record: PasswordRecord
+    let record: Password
     let isExpanded: Bool
     
     var body: some View {

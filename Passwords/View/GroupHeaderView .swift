@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct GroupHeaderView: View {
-    let group: GroupRecord
+    let group: Group
     @Binding var expandedGroups: Set<UUID>
     var isDeleteMode: Bool
-    var deleteGroupAction: (GroupRecord) -> Void
+    var deleteGroupAction: (Group) -> Void
     
     @Environment(\.modelContext) private var modelContext
     
@@ -47,7 +47,7 @@ struct GroupHeaderView: View {
     }
     
     private func fetchPasswordCount() -> Int {
-        let passwords = GroupRecord.fetchGroup(modelContext, groupID: group.id)
+        let passwords = Group.fetchGroup(modelContext, groupID: group.id)
         return passwords.count
     }
     

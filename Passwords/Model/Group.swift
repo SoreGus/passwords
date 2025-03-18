@@ -2,7 +2,7 @@ import SwiftData
 import Foundation
 
 @Model
-class GroupRecord: Identifiable {
+class Group: Identifiable {
     @Attribute(.unique) var id: UUID = UUID()
     var name: String
     var createdAt: Date
@@ -12,8 +12,8 @@ class GroupRecord: Identifiable {
         self.createdAt = Date()
     }
 
-    static func fetchGroup(_ context: ModelContext, groupID: UUID) -> [PasswordRecord] {
-        let fetchDescriptor = FetchDescriptor<PasswordRecord>(
+    static func fetchGroup(_ context: ModelContext, groupID: UUID) -> [Password] {
+        let fetchDescriptor = FetchDescriptor<Password>(
             predicate: #Predicate { record in
                 record.group?.id == groupID
             }
@@ -27,8 +27,8 @@ class GroupRecord: Identifiable {
         }
     }
     
-    static func fetchAll(_ context: ModelContext) -> [GroupRecord] {
-        let fetchDescriptor = FetchDescriptor<GroupRecord>()
+    static func fetchAll(_ context: ModelContext) -> [Group] {
+        let fetchDescriptor = FetchDescriptor<Group>()
         
         do {
             return try context.fetch(fetchDescriptor)

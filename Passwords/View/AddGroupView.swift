@@ -22,7 +22,7 @@ struct AddGroupView: View {
     }
     
     private func saveGroup() {
-        let newGroup = GroupRecord(name: groupName)
+        let newGroup = Group(name: groupName)
         modelContext.insert(newGroup)
         try? modelContext.save()
         dismiss()
