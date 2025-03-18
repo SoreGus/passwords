@@ -8,38 +8,48 @@ struct MainView: View {
     @State private var selectedPassword: Password?
 
     var body: some View {
-        NavigationSplitView() {
+        NavigationSplitView {
             
-            NavigationLink(destination: AddPasswordView()) {
-                Text("New Password")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, maxHeight: 10)
-                    .padding()
-                    .foregroundColor(.blue)
-                    .overlay(
-                        Capsule()
-                            .stroke(Color.blue, lineWidth: 2)
-                    )
-            }
-            .listRowBackground(Color.clear)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 10)
-            
-            List(groups, selection: $selectedGroup) { group in
-                Text(group.name)
-                    .onTapGesture {
-                        selectedGroup = group
+            VStack {
+                NavigationLink(destination: AddPasswordView()
+                    .onAppear {
+                        selectedGroup = nil
                         selectedPassword = nil
+                    }) {
+                    Text("New Password")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, maxHeight: 10)
+                        .padding()
+                        .foregroundColor(.blue)
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.blue, lineWidth: 2)
+                        )
+                }
+                .listRowBackground(Color.clear)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 10)
+
+                List(groups, selection: $selectedGroup) { group in
+                    Text(group.name)
+                        .onTapGesture {
+                            selectedGroup = group
+                            selectedPassword = nil
+                        }
+                }
+                .navigationTitle("Groups")
+                .toolbar {
+                    ToolbarItem {
+                        NavigationLink(destination: AddGroupView()
+                            .onAppear {
+                                selectedGroup = nil
+                                selectedPassword = nil
+                            }) {
+                            Text("New Group")
+                        }
+                        .listRowBackground(Color.clear)
+                        .padding(.vertical, 5)
                     }
-            }
-            .navigationTitle("Groups")
-            .toolbar {
-                ToolbarItem {
-                    NavigationLink(destination: AddGroupView()) {
-                        Text("New Group")
-                    }
-                    .listRowBackground(Color.clear)
-                    .padding(.vertical, 5)
                 }
             }
         } content: {
@@ -58,6 +68,9 @@ struct MainView: View {
         } detail: {
             if let selectedPassword = selectedPassword {
                 PasswordRegisterView(record: selectedPassword)
+            } else {
+                Text("Select a password to view details")
+                    .foregroundColor(.gray)
             }
         }
     }
