@@ -17,13 +17,6 @@ public struct FolderListView: View {
 
     public var body: some View {
         VStack {
-            Button {
-                createNewPassword = false
-                createNewFolder = true
-            } label: {
-                Text("New Folder")
-            }
-
             List(viewModel.folders) { folder in
                 Button {
                     selectedFolder = folder
@@ -34,6 +27,16 @@ public struct FolderListView: View {
                 }
             }
             .navigationTitle("Folders")
+            .toolbar {
+                Button {
+                    createNewPassword = false
+                    createNewFolder = true
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.headline)
+                            .foregroundColor(.blue)
+                }
+            }
         }.onAppear {
             viewModel.load(modelContext)
         }

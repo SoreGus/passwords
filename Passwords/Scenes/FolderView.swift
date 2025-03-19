@@ -18,17 +18,20 @@ struct FolderView: View {
     
     var body: some View {
         VStack {
-            Button {
-                createNewFolder = false
-                createNewPassword = true
-            } label: {
-                Text("New Password")
-            }
-            
             List(viewModel.folder.passwords) { password in
                 Text(password.domain)
             }
             .navigationTitle("\(viewModel.folder.name) Passwords")
+        }
+        .toolbar {
+            Button {
+                createNewFolder = false
+                createNewPassword = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.headline)
+                        .foregroundColor(.blue)
+            }
         }
     }
 }

@@ -7,9 +7,10 @@ struct MainView: View {
     @State private var selectedFolder: Folder?
     @State private var createNewFolder: Bool = false
     @State private var createNewPassword: Bool = false
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
     
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility)  {
             FolderListView(
                 selectedFolder: $selectedFolder,
                 createNewFolder: $createNewFolder,
@@ -26,10 +27,16 @@ struct MainView: View {
                 )
             } else {
                 Text("Create or select a folder")
+                    .onAppear {
+                        columnVisibility = .automatic
+                    }
             }
         } detail: {
             if createNewPassword {
                 AddPasswordView()
+                    .onAppear {
+                        columnVisibility = .doubleColumn
+                    }
             } else if createNewFolder {
                 AddGroupView()
             }  else {
