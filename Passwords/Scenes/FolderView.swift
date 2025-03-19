@@ -17,12 +17,16 @@ struct FolderView: View {
 
     
     var body: some View {
-        VStack {
-            List(viewModel.folder.passwords) { password in
-                Text(password.domain)
+        
+        
+        Form {
+            Section() {
+                List(viewModel.folder.passwords) { password in
+                    Text(password.domain)
+                }
             }
-            .navigationTitle("\(viewModel.folder.name) Passwords")
         }
+        .navigationTitle("\(viewModel.folder.name) Passwords")
         .toolbar {
             Button {
                 createNewFolder = false

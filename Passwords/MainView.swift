@@ -14,7 +14,8 @@ struct MainView: View {
             FolderListView(
                 selectedFolder: $selectedFolder,
                 createNewFolder: $createNewFolder,
-                createNewPassword: $createNewPassword
+                createNewPassword: $createNewPassword,
+                columnVisibility: $columnVisibility
             )
         } content: {
             if let selectedFolder, !createNewFolder {
@@ -33,16 +34,21 @@ struct MainView: View {
             }
         } detail: {
             if createNewPassword {
-                AddPasswordView()
+                AddPasswordView(viewModel: AddPasswordViewModel.init())
                     .onAppear {
                         columnVisibility = .doubleColumn
                     }
             } else if createNewFolder {
-                AddGroupView()
+                AddFolderView(viewModel: .init())
             }  else {
                 Text("Select a password to view details")
                     .foregroundColor(.gray)
             }
         }
     }
+}
+
+#Preview {
+    MainView()
+        .environment(\.colorScheme, .dark)
 }
