@@ -9,8 +9,8 @@ struct AddPasswordView: View {
     @State private var email = ""
     @State private var username = ""
     @State private var password = ""
-    @Query(sort: \Group.createdAt, order: .reverse) private var groups: [Group]
-    @State private var selectedGroup: Group?
+    @Query(sort: \Folder.createdAt, order: .reverse) private var folders: [Folder]
+    @State private var selectedFolder: Folder?
     
     var body: some View {
         Form {
@@ -21,10 +21,10 @@ struct AddPasswordView: View {
             }
             
             Section("Group") {
-                Picker("Select Group", selection: $selectedGroup) {
-                    Text("No Group").tag(nil as Group?)
-                    ForEach(groups) { group in
-                        Text(group.name).tag(group as Group?)
+                Picker("Select Group", selection: $selectedFolder) {
+                    Text("No Group").tag(nil as Folder?)
+                    ForEach(folders) { folder in
+                        Text(folder.name).tag(folder as Folder?)
                     }
                 }
             }
@@ -33,7 +33,7 @@ struct AddPasswordView: View {
                 Task {
                    // do {
                      //   let encryptedPassword = try await SecureStorageWorker.shared.encryptPassword(password)
-                        let newRecord = Password(domain: domain, email: email, username: username, encryptedPassword: .init(count: 256), group: selectedGroup)
+                        let newRecord = Password(domain: domain, email: email, username: username, encryptedPassword: .init(count: 256), folder: selectedFolder)
                         modelContext.insert(newRecord)
                         dismiss()
 //                    } catch {

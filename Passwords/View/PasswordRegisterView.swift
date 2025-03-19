@@ -7,12 +7,12 @@ struct PasswordRegisterView: View {
     @Environment(\.dismiss) private var dismiss
     
     let record: Password
-    @Query private var groups: [Group]
+    @Query private var folders: [Folder]
     
     @State private var decryptedPassword: String?
     @State private var showPassword = false
     @State private var authenticationError = false
-    @State private var selectedGroup: Group?
+    @State private var selectedFolder: Folder?
     @State private var copied = false
     
     var body: some View {
@@ -50,13 +50,13 @@ struct PasswordRegisterView: View {
             }
             
             Section("Change Group") {
-                Picker("Select Group", selection: $selectedGroup) {
-                    Text("No Group").tag(nil as Group?)
-                    ForEach(groups) { group in
-                        Text(group.name).tag(group as Group?)
+                Picker("Select Group", selection: $selectedFolder) {
+                    Text("No Group").tag(nil as Folder?)
+                    ForEach(folders) { folder in
+                        Text(folder.name).tag(folder as Folder?)
                     }
                 }
-                .onChange(of: selectedGroup) { _, newGroup in
+                .onChange(of: selectedFolder) { _, newGroup in
                     updateGroup(newGroup)
                 }
             }
@@ -73,7 +73,7 @@ struct PasswordRegisterView: View {
         }
         .navigationTitle("Password Details")
         .onAppear {
-            selectedGroup = record.group
+            selectedFolder = record.folder
         }
         .alert("Authentication Failed", isPresented: $authenticationError) {
             Button("OK", role: .cancel) {}
@@ -114,8 +114,8 @@ struct PasswordRegisterView: View {
         }
     }
     
-    private func updateGroup(_ newGroup: Group?) {
-        record.group = newGroup
+    private func updateGroup(_ newFolder: Folder?) {
+        record.folder = newFolder
         try? modelContext.save()
     }
     

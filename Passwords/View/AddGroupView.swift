@@ -5,25 +5,25 @@ struct AddGroupView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    @State private var groupName = ""
+    @State private var folderName = ""
     
     var body: some View {
         Form {
-            Section("Group Name") {
-                TextField("Enter group name", text: $groupName)
+            Section("Folder Name") {
+                TextField("Enter folder name", text: $folderName)
             }
             
             Button("Save") {
                 saveGroup()
             }
-            .disabled(groupName.isEmpty)
+            .disabled(folderName.isEmpty)
         }
-        .navigationTitle("New Group")
+        .navigationTitle("New Folder")
     }
     
     private func saveGroup() {
-        let newGroup = Group(name: groupName)
-        modelContext.insert(newGroup)
+        let newFolder = Folder(name: folderName)
+        modelContext.insert(newFolder)
         try? modelContext.save()
         dismiss()
     }

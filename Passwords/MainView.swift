@@ -2,73 +2,37 @@ import SwiftUI
 import SwiftData
 
 struct MainView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var groups: [Group]
-    @State private var selectedGroup: Group?
+    
     @State private var selectedPassword: Password?
-
+    @State private var selectedFolder: Folder?
+    @State private var createNewFolder: Bool = false
+    @State private var createNewPassword: Bool = false
+    
     var body: some View {
         NavigationSplitView {
-            
-            VStack {
-                NavigationLink(destination: AddPasswordView()
-                    .onAppear {
-                        selectedGroup = nil
-                        selectedPassword = nil
-                    }) {
-                    Text("New Password")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, maxHeight: 10)
-                        .padding()
-                        .foregroundColor(.blue)
-                        .overlay(
-                            Capsule()
-                                .stroke(Color.blue, lineWidth: 2)
-                        )
-                }
-                .listRowBackground(Color.clear)
-                .padding(.vertical, 5)
-                .padding(.horizontal, 10)
-
-                List(groups, selection: $selectedGroup) { group in
-                    Text(group.name)
-                        .onTapGesture {
-                            selectedGroup = group
-                            selectedPassword = nil
-                        }
-                }
-                .navigationTitle("Groups")
-                .toolbar {
-                    ToolbarItem {
-                        NavigationLink(destination: AddGroupView()
-                            .onAppear {
-                                selectedGroup = nil
-                                selectedPassword = nil
-                            }) {
-                            Text("New Group")
-                        }
-                        .listRowBackground(Color.clear)
-                        .padding(.vertical, 5)
-                    }
-                }
-            }
+            FolderListView(
+                selectedFolder: $selectedFolder,
+                createNewFolder: $createNewFolder,
+                createNewPassword: $createNewPassword
+            )
         } content: {
-            if let selectedGroup = selectedGroup {
-                let passwords = Group.fetchGroup(modelContext, groupID: selectedGroup.id)
-                List(passwords, selection: $selectedPassword) { password in
-                    Text(password.domain)
-                        .onTapGesture {
-                            selectedPassword = password
-                        }
-                }
-                .navigationTitle("Passwords")
+            if let selectedFolder, !createNewFolder {
+                FolderView(
+                    viewModel: .init(
+                        folder: selectedFolder
+                    ),
+                    createNewPassword: $createNewPassword,
+                    createNewFolder: $createNewFolder
+                )
             } else {
-                Text("Select Group")
+                Text("Create or select a folder")
             }
         } detail: {
-            if let selectedPassword = selectedPassword {
-                PasswordRegisterView(record: selectedPassword)
-            } else {
+            if createNewPassword {
+                AddPasswordView()
+            } else if createNewFolder {
+                AddGroupView()
+            }  else {
                 Text("Select a password to view details")
                     .foregroundColor(.gray)
             }

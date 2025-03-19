@@ -6,7 +6,7 @@ struct PasswordsApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Password.self,
-            Group.self
+            Folder.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
