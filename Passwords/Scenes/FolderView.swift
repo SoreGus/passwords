@@ -14,6 +14,7 @@ struct FolderView: View {
     @StateObject var viewModel: GroupViewModel
     @Binding var createNewPassword: Bool
     @Binding var createNewFolder: Bool
+    @Binding var selectedPassword: Password?
 
     
     var body: some View {
@@ -22,7 +23,13 @@ struct FolderView: View {
         Form {
             Section() {
                 List(viewModel.folder.passwords) { password in
-                    Text(password.domain)
+                    Button {
+                        createNewFolder = false
+                        createNewPassword = false
+                        selectedPassword = password
+                    } label: {
+                        Text(password.domain)
+                    }
                 }
             }
         }

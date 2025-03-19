@@ -22,9 +22,9 @@ public struct FolderListView: View {
                 List(viewModel.folders) { folder in
                     HStack {
                         Button {
-                            selectedFolder = folder
                             createNewPassword = false
                             createNewFolder = false
+                            selectedFolder = folder
                         } label: {
                             Text(folder.name)
                         }
