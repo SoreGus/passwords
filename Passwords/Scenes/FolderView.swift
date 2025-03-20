@@ -41,7 +41,7 @@ struct FolderView: View {
                 }
             }
         }
-        .navigationTitle("\(viewModel.folder.name) Passwords")
+        .navigationTitle("\(viewModel.folder.name)")
         .toolbar {
             Button {
                 createNewFolder = false

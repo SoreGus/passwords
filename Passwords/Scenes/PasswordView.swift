@@ -44,7 +44,6 @@ struct PasswordView: View {
 
             Section("Change Group") {
                 Picker("Select Group", selection: $viewModel.selectedFolder) {
-                    Text("No Group").tag(nil as Folder?)
                     ForEach(folders) { folder in
                         Text(folder.name).tag(folder as Folder?)
                     }
