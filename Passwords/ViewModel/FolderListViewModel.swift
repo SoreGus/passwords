@@ -19,4 +19,22 @@ class FolderListViewModel: ObservableObject {
             print(error)
         }
     }
+    
+    func deleteFolder(_ folder: Folder, _ context: ModelContext) {
+        do {
+            // Excluir todas as senhas associadas à pasta
+            for password in folder.passwords {
+                context.delete(password)
+            }
+
+            // Excluir a pasta
+            context.delete(folder)
+            folders.removeAll { $0.id == folder.id }
+
+            // Salvar as alterações no contexto
+            try context.save()
+        } catch {
+            print("Error deleting folder and related passwords: \(error)")
+        }
+    }
 }

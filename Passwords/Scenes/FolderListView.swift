@@ -15,6 +15,9 @@ public struct FolderListView: View {
     @Binding var createNewFolder: Bool
     @Binding var createNewPassword: Bool
     @Binding var columnVisibility: NavigationSplitViewVisibility
+    @State private var isDeleting: Bool = false
+    @State private var showAlert: Bool = false
+    @State private var folderToDelete: Folder?
 
     public var body: some View {
         Form {
@@ -25,6 +28,16 @@ public struct FolderListView: View {
                             .padding(.vertical, 4) // Reduzindo o padding vertical
                             .padding(.horizontal, 10) // Ajustando o padding horizontal
                         Spacer()
+                        if isDeleting {
+                            Button {
+                                folderToDelete = folder
+                                showAlert = true
+                            } label: {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 4) // Reduzindo o padding vertical da row
@@ -33,6 +46,7 @@ public struct FolderListView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .contentShape(Rectangle()) // Expande a área de toque para toda a linha
                     .onTapGesture {
+                        guard !isDeleting else { return }
                         createNewPassword = false
                         createNewFolder = false
                         selectedFolder = folder
@@ -43,16 +57,30 @@ public struct FolderListView: View {
         }
         .navigationTitle("Folders")
         .toolbar {
-            Button {
-                createNewPassword = false
-                createNewFolder = true
-                columnVisibility = .detailOnly
-            } label: {
-                Image(systemName: "plus")
-                    .font(.headline)
-                    .foregroundColor(.blue)
+            HStack {
+                Button {
+                    isDeleting.toggle()
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.headline)
+                }
+                Button {
+                    createNewFolder = true
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.headline)
+                }
             }
-        }.onAppear {
+        }
+        .alert("All passwords related to this folder will be deleted. Are you sure?", isPresented: $showAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                if let folder = folderToDelete {
+                    viewModel.deleteFolder(folder, modelContext)
+                }
+            }
+        }
+        .onAppear {
             viewModel.load(modelContext)
         }
     }
