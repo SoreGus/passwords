@@ -6,7 +6,6 @@ struct AddPasswordView: View {
     @Environment(\.dismiss) private var dismiss
     
     @ObservedObject var viewModel: AddPasswordViewModel
-    @State private var folders: [Folder] = []
     
     var body: some View {
         Form {
@@ -18,7 +17,7 @@ struct AddPasswordView: View {
             
             Section("Group") {
                 Picker("Select Group", selection: $viewModel.selectedFolder) {
-                    ForEach(folders) { folder in
+                    ForEach(viewModel.folders, id: \.id) { folder in
                         Text(folder.name).tag(folder as Folder?)
                     }
                 }
@@ -30,10 +29,8 @@ struct AddPasswordView: View {
             }
         }
         .navigationTitle("New Password")
+        .onAppear {
+            viewModel.fetchFolders(modelContext)
+        }
     }
-}
-
-#Preview {
-    AddPasswordView(viewModel: .init())
-        .environment(\.colorScheme, .dark)
 }

@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct MainView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = FolderListViewModel()
 
     var body: some View {
@@ -22,8 +23,10 @@ struct MainView: View {
                 }
             } detail: {
                 if viewModel.createNewPassword {
-                    AddPasswordView(viewModel: AddPasswordViewModel.init())
-                        .onAppear { viewModel.columnVisibility = .doubleColumn }
+                    AddPasswordView(
+                        viewModel: AddPasswordViewModel.init(context: modelContext)
+                    )
+                    .onAppear { viewModel.columnVisibility = .doubleColumn }
                 } else if viewModel.createNewFolder {
                     AddFolderView(viewModel: .init())
                 } else if let selectedPassword = viewModel.selectedPassword {
@@ -40,7 +43,7 @@ struct MainView: View {
                     AddFolderView(viewModel: .init())
                 }
                 .navigationDestination(isPresented: $viewModel.createNewPassword) {
-                    AddPasswordView(viewModel: AddPasswordViewModel.init())
+                    AddPasswordView(viewModel: AddPasswordViewModel.init(context: modelContext))
                 }
             }
         }

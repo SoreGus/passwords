@@ -10,9 +10,18 @@ class AddPasswordViewModel: ObservableObject {
     @Published var selectedFolder: Folder?
     @Published var folders: [Folder] = []
     
+    init(context: ModelContext) {
+        fetchFolders(context) // Carregar as pastas ao inicializar a ViewModel
+    }
+    
     func fetchFolders(_ context: ModelContext) {
-        let descriptor = FetchDescriptor<Folder>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
-        folders = (try? context.fetch(descriptor)) ?? []
+        let descriptor = FetchDescriptor<Folder>()
+        do {
+            folders = try context.fetch(descriptor)
+            print("Pastas carregadas na init: \(folders.map { $0.name })")
+        } catch {
+            print("Erro ao buscar pastas: \(error)")
+        }
     }
     
     func savePassword(_ context: ModelContext) {
