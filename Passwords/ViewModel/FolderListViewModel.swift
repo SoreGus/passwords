@@ -10,6 +10,13 @@ import SwiftData
 
 class FolderListViewModel: ObservableObject {
     @Published var folders: [Folder] = []
+    @Published var selectedFolder: Folder?
+    @Published var createNewFolder: Bool = false
+    @Published var createNewPassword: Bool = false
+    @Published var columnVisibility: NavigationSplitViewVisibility = .all
+    @Published var selectedPassword: Password?
+    @Published var isDeleting: Bool = false
+    @Published var showAlert: Bool = false
     
     func load(_ context: ModelContext) {
         do {
@@ -22,16 +29,12 @@ class FolderListViewModel: ObservableObject {
     
     func deleteFolder(_ folder: Folder, _ context: ModelContext) {
         do {
-            // Excluir todas as senhas associadas à pasta
             for password in folder.passwords {
                 context.delete(password)
             }
 
-            // Excluir a pasta
             context.delete(folder)
             folders.removeAll { $0.id == folder.id }
-
-            // Salvar as alterações no contexto
             try context.save()
         } catch {
             print("Error deleting folder and related passwords: \(error)")
@@ -40,5 +43,21 @@ class FolderListViewModel: ObservableObject {
     
     func passwordCount(for folder: Folder) -> Int {
         return folder.passwords.count
+    }
+    
+    func toggleDeleting() {
+        isDeleting.toggle()
+    }
+    
+    func confirmDelete(_ folder: Folder) {
+        selectedFolder = folder
+        showAlert = true
+    }
+    
+    func deleteConfirmed(_ context: ModelContext) {
+        guard let folder = selectedFolder else { return }
+        deleteFolder(folder, context)
+        selectedFolder = nil
+        showAlert = false
     }
 }
