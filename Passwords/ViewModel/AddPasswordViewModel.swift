@@ -11,8 +11,10 @@ class AddPasswordViewModel: ObservableObject {
     @Published var folders: [Folder] = []
     
     init(
-        context: ModelContext
+        context: ModelContext,
+        selectedfolder: Folder?
     ) {
+        self.selectedFolder = selectedfolder
         fetchFolders(context)
     }
     

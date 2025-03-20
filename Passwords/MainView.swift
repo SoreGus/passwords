@@ -8,6 +8,7 @@ struct MainView: View {
     @State var selectedPassword: Password?
     @State var createNewFolder: Bool = false
     @State var createNewPassword: Bool = false
+    
     @ObservedObject private var folderListViewModel = FolderListViewModel(
         columnVisibility: .all
     )
@@ -37,7 +38,8 @@ struct MainView: View {
                         viewModel: folderViewModel(folder: selectedFolder),
                         createNewPassword: $createNewPassword,
                         createNewFolder: $createNewFolder,
-                        selectedPassword: $selectedPassword
+                        selectedPassword: $selectedPassword,
+                        selectedFolder: $selectedFolder
                     )
                 } else {
                     Text("Create or select a folder")
@@ -46,7 +48,10 @@ struct MainView: View {
             } detail: {
                 if createNewPassword && !createNewFolder {
                     AddPasswordView(
-                        viewModel: AddPasswordViewModel.init(context: modelContext)
+                        viewModel: AddPasswordViewModel.init(
+                            context: modelContext,
+                            selectedfolder: selectedFolder
+                        )
                     )
                     .onAppear { columnVisibility = .doubleColumn }
                 } else if createNewFolder {

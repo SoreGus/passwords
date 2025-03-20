@@ -14,6 +14,7 @@ struct FolderView: View {
     @Binding var createNewPassword: Bool
     @Binding var createNewFolder: Bool
     @Binding var selectedPassword: Password?
+    @Binding var selectedFolder: Folder?
 
     var body: some View {
         Form {
@@ -45,6 +46,7 @@ struct FolderView: View {
             Button {
                 createNewFolder = false
                 createNewPassword = true
+                selectedFolder = viewModel.folder
             } label: {
                 Image(systemName: "plus")
                     .font(.headline)
