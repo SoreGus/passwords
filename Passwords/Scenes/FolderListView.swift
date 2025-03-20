@@ -28,6 +28,9 @@ public struct FolderListView: View {
                             .padding(.vertical, 4) // Reduzindo o padding vertical
                             .padding(.horizontal, 10) // Ajustando o padding horizontal
                         Spacer()
+                        Text("\(viewModel.passwordCount(for: folder))")
+                            .foregroundColor(.gray)
+                            .font(.subheadline)
                         if isDeleting {
                             Button {
                                 folderToDelete = folder

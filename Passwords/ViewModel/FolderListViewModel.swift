@@ -37,4 +37,8 @@ class FolderListViewModel: ObservableObject {
             print("Error deleting folder and related passwords: \(error)")
         }
     }
+    
+    func passwordCount(for folder: Folder) -> Int {
+        return folder.passwords.count
+    }
 }
