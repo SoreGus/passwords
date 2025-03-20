@@ -10,7 +10,7 @@ import SwiftUI
 public struct FolderListView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel = GroupListViewModel()
+    @StateObject var viewModel = FolderListViewModel()
     @Binding var selectedFolder: Folder?
     @Binding var createNewFolder: Bool
     @Binding var createNewPassword: Bool
@@ -18,17 +18,26 @@ public struct FolderListView: View {
 
     public var body: some View {
         Form {
-            Section() {
+            Section {
                 List(viewModel.folders) { folder in
                     HStack {
-                        Button {
-                            createNewPassword = false
-                            createNewFolder = false
-                            selectedFolder = folder
-                        } label: {
-                            Text(folder.name)
-                        }
+                        Text(folder.name)
+                            .padding(.vertical, 4) // Reduzindo o padding vertical
+                            .padding(.horizontal, 10) // Ajustando o padding horizontal
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4) // Reduzindo o padding vertical da row
+                    .background(selectedFolder == folder ? Color.blue.opacity(0.3) : Color.clear)
+                    .foregroundColor(selectedFolder == folder ? .blue : .primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .contentShape(Rectangle()) // Expande a área de toque para toda a linha
+                    .onTapGesture {
+                        createNewPassword = false
+                        createNewFolder = false
+                        selectedFolder = folder
+                    }
+                    .listRowBackground(Color.clear)
                 }
             }
         }
@@ -41,7 +50,7 @@ public struct FolderListView: View {
             } label: {
                 Image(systemName: "plus")
                     .font(.headline)
-                        .foregroundColor(.blue)
+                    .foregroundColor(.blue)
             }
         }.onAppear {
             viewModel.load(modelContext)
@@ -64,6 +73,6 @@ public struct FolderListView: View {
             createNewPassword: $createNewPassword,
             columnVisibility: $columnVisibility
         )
-            .environment(\.colorScheme, .dark)
+        .environment(\.colorScheme, .dark)
     }
 }

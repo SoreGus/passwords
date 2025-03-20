@@ -3,7 +3,7 @@ import SwiftData
 
 struct AddFolderView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject var viewModel: AddFolderViewModel
+    @ObservedObject var viewModel: AddFolderViewModel
     @State private var folderName = ""
 
     var body: some View {

@@ -5,7 +5,7 @@ struct AddPasswordView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    @StateObject var viewModel: AddPasswordViewModel
+    @ObservedObject var viewModel: AddPasswordViewModel
     @State private var folders: [Folder] = []
     
     var body: some View {

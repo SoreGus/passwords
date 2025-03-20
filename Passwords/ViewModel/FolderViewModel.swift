@@ -1,5 +1,5 @@
 //
-//  GroupViewModel.swift
+//  FolderViewModel.swift
 //  Passwords
 //
 //  Created by Gustavo Soré on 18/03/25.
@@ -8,9 +8,10 @@
 import SwiftUI
 import SwiftData
 
-class GroupViewModel: ObservableObject {
+class FolderViewModel: ObservableObject {
     
     @Published var folder: Folder
+//    @Binding var folder: Folder
     
     init(
         folder: Folder
