@@ -11,7 +11,6 @@ import SwiftData
 class FolderViewModel: ObservableObject {
     
     @Published var folder: Folder
-//    @Binding var folder: Folder
     
     init(
         folder: Folder

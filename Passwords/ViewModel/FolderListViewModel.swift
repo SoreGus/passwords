@@ -9,14 +9,23 @@ import SwiftUI
 import SwiftData
 
 class FolderListViewModel: ObservableObject {
-    @Published var folders: [Folder] = []
+    @Published var folders: [Folder]
     @Published var selectedFolder: Folder?
-    @Published var createNewFolder: Bool = false
-    @Published var createNewPassword: Bool = false
-    @Published var columnVisibility: NavigationSplitViewVisibility = .all
+    @Published var columnVisibility: NavigationSplitViewVisibility
     @Published var selectedPassword: Password?
     @Published var isDeleting: Bool = false
     @Published var showAlert: Bool = false
+    
+    init(
+        selectedFolder: Folder? = nil,
+        columnVisibility: NavigationSplitViewVisibility,
+        selectedPassword: Password? = nil
+    ) {
+        self.folders = []
+        self.selectedFolder = selectedFolder
+        self.columnVisibility = columnVisibility
+        self.selectedPassword = selectedPassword
+    }
     
     func load(_ context: ModelContext) {
         do {
@@ -57,7 +66,9 @@ class FolderListViewModel: ObservableObject {
     func deleteConfirmed(_ context: ModelContext) {
         guard let folder = selectedFolder else { return }
         deleteFolder(folder, context)
-        selectedFolder = nil
-        showAlert = false
+        DispatchQueue.main.async {
+            self.selectedFolder = nil
+            self.showAlert = false
+        }
     }
 }

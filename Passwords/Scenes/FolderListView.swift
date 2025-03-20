@@ -10,7 +10,9 @@ import SwiftUI
 public struct FolderListView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel = FolderListViewModel()
+    @ObservedObject var viewModel: FolderListViewModel
+    @Binding var createNewFolder: Bool
+    @Binding var createNewPassword: Bool
 
     public var body: some View {
         Form {
@@ -42,8 +44,8 @@ public struct FolderListView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         guard !viewModel.isDeleting else { return }
-                        viewModel.createNewPassword = false
-                        viewModel.createNewFolder = false
+                        createNewPassword = false
+                        createNewFolder = false
                         viewModel.selectedFolder = folder
                     }
                     .listRowBackground(Color.clear)
@@ -60,7 +62,7 @@ public struct FolderListView: View {
                         .font(.headline)
                 }
                 Button {
-                    viewModel.createNewFolder = true
+                    createNewFolder = true
                 } label: {
                     Image(systemName: "plus")
                         .font(.headline)

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct FolderView: View {
-    
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: FolderViewModel
@@ -22,12 +21,12 @@ struct FolderView: View {
                 List(viewModel.folder.passwords) { password in
                     HStack {
                         Text(password.domain)
-                            .padding(.vertical, 4) // Reduzindo o padding vertical
-                            .padding(.horizontal, 10) // Ajustando o padding horizontal
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 10)
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4) // Reduzindo o padding vertical da row
+                    .padding(.vertical, 4)
                     .background(selectedPassword == password ? Color.blue.opacity(0.3) : Color.clear)
                     .foregroundColor(selectedPassword == password ? .blue : .primary)
                     .clipShape(RoundedRectangle(cornerRadius: 8))

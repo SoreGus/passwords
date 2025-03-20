@@ -10,8 +10,10 @@ class AddPasswordViewModel: ObservableObject {
     @Published var selectedFolder: Folder?
     @Published var folders: [Folder] = []
     
-    init(context: ModelContext) {
-        fetchFolders(context) // Carregar as pastas ao inicializar a ViewModel
+    init(
+        context: ModelContext
+    ) {
+        fetchFolders(context)
     }
     
     func fetchFolders(_ context: ModelContext) {

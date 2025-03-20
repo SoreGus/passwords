@@ -3,33 +3,55 @@ import SwiftData
 
 struct MainView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel = FolderListViewModel()
+    @State var columnVisibility: NavigationSplitViewVisibility = .all
+    @State var selectedFolder: Folder?
+    @State var selectedPassword: Password?
+    @State var createNewFolder: Bool = false
+    @State var createNewPassword: Bool = false
+    @ObservedObject private var folderListViewModel = FolderListViewModel(
+        columnVisibility: .all
+    )
+    @ObservedObject private var folderViewModel = FolderViewModel(
+        folder: .init(name: "A")
+    )
+    
+    func folderViewModel(
+        folder: Folder
+    ) -> FolderViewModel {
+        return .init(
+            folder: folder
+        )
+    }
 
     var body: some View {
         if isIpadOrMac() {
-            NavigationSplitView(columnVisibility: $viewModel.columnVisibility) {
-                FolderListView(viewModel: viewModel)
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                FolderListView(
+                    viewModel: folderListViewModel,
+                    createNewFolder: $createNewFolder,
+                    createNewPassword: $createNewPassword
+                )
             } content: {
-                if let selectedFolder = viewModel.selectedFolder, !viewModel.createNewFolder {
+                if let selectedFolder = folderListViewModel.selectedFolder, !createNewFolder {
                     FolderView(
-                        viewModel: .init(folder: selectedFolder),
-                        createNewPassword: $viewModel.createNewPassword,
-                        createNewFolder: $viewModel.createNewFolder,
-                        selectedPassword: $viewModel.selectedPassword
+                        viewModel: folderViewModel(folder: selectedFolder),
+                        createNewPassword: $createNewPassword,
+                        createNewFolder: $createNewFolder,
+                        selectedPassword: $selectedPassword
                     )
                 } else {
                     Text("Create or select a folder")
-                        .onAppear { viewModel.columnVisibility = .automatic }
+                        .onAppear { columnVisibility = .automatic }
                 }
             } detail: {
-                if viewModel.createNewPassword {
+                if createNewPassword && !createNewFolder {
                     AddPasswordView(
                         viewModel: AddPasswordViewModel.init(context: modelContext)
                     )
-                    .onAppear { viewModel.columnVisibility = .doubleColumn }
-                } else if viewModel.createNewFolder {
+                    .onAppear { columnVisibility = .doubleColumn }
+                } else if createNewFolder {
                     AddFolderView(viewModel: .init())
-                } else if let selectedPassword = viewModel.selectedPassword {
+                } else if let selectedPassword = selectedPassword {
                     PasswordView(viewModel: .init(record: selectedPassword))
                 } else {
                     Text("Select a password to view details")
@@ -37,15 +59,7 @@ struct MainView: View {
                 }
             }
         } else {
-            NavigationStack {
-                FolderListView(viewModel: viewModel)
-                .navigationDestination(isPresented: $viewModel.createNewFolder) {
-                    AddFolderView(viewModel: .init())
-                }
-                .navigationDestination(isPresented: $viewModel.createNewPassword) {
-                    AddPasswordView(viewModel: AddPasswordViewModel.init(context: modelContext))
-                }
-            }
+            Text("Not Implemented")
         }
     }
 
