@@ -2,11 +2,16 @@ import Foundation
 import Security
 import CryptoKit
 
-actor SecureStorageWorker {
+protocol SecureStorageWorkerProtocol {
+    func encryptPassword(_ password: String) throws -> Data
+    func decryptPassword(_ encryptedData: Data) throws -> String
+}
+
+class SecureStorageWorker: SecureStorageWorkerProtocol {
     static let shared = SecureStorageWorker()
-    private let keyTag = "com.myapp.securekey"
+    private let keyTag = "sore.passwords.key"
     
-    private init() {}
+    public init() {}
     
     private func getSecureKey() throws -> SecKey {
         let query: [String: Any] = [
@@ -26,18 +31,17 @@ actor SecureStorageWorker {
         let attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: 256,
-            kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
-            kSecPrivateKeyAttrs as String: [
-                kSecAttrIsPermanent as String: true,
-                kSecAttrApplicationTag as String: keyTag
-            ]
+            kSecAttrIsPermanent as String: true,  // Apenas para chaves privadas
+            kSecAttrApplicationTag as String: keyTag,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
+            kSecAttrAccessGroup as String: "Z33726G6B5.sore.passwords"
         ]
         
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
             throw error!.takeRetainedValue() as Error
         }
-        
+
         return privateKey
     }
     

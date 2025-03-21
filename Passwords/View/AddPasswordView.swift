@@ -10,7 +10,7 @@ struct AddPasswordView: View {
     var body: some View {
         Form {
             Section("Details") {
-                TextField("Domain", text: $viewModel.domain)
+                TextField("Domain / Host", text: $viewModel.domain)
                 TextField("User / Email", text: $viewModel.email)
                 SecureField("Password", text: $viewModel.password)
             }
