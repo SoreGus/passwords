@@ -17,6 +17,10 @@ You must sign the application with a valid Apple Developer account to build and 
 
 Xcode version 16.2
 
+## Binary
+
+This reposity has a binary that could be run on Mac, but to work properlly it needs to be a mac register on it apple developer certificate. So might be some problens.
+
 ## Architecture
 
 The app uses the MVVM pattern with SwiftUI and SwiftData.  
