@@ -18,6 +18,7 @@ class SecureStorageWorker: SecureStorageWorkerProtocol {
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: keyTag,
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
+            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate,
             kSecReturnRef as String: true
         ]
         
@@ -47,13 +48,22 @@ class SecureStorageWorker: SecureStorageWorkerProtocol {
     
     func encryptPassword(_ password: String) throws -> Data {
         let key = try getSecureKey()
+        
+        guard let publicKey = SecKeyCopyPublicKey(key) else {
+            throw NSError(domain: "SecureStorage", code: -2, userInfo: [NSLocalizedDescriptionKey: "Failed to extract public key"])
+        }
+        
         guard let passwordData = password.data(using: .utf8) else {
             throw NSError(domain: "Invalid password encoding", code: -1, userInfo: nil)
         }
         
         var error: Unmanaged<CFError>?
         guard let encryptedData = SecKeyCreateEncryptedData(
-            key, .eciesEncryptionStandardX963SHA256AESGCM, passwordData as CFData, &error) as Data? else {
+            publicKey,
+            .eciesEncryptionStandardX963SHA256AESGCM,
+            passwordData as CFData,
+            &error
+        ) as Data? else {
             throw error!.takeRetainedValue() as Error
         }
         

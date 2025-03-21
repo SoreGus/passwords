@@ -1,5 +1,5 @@
 //
-//  PasswordRegisterViewModel.swift
+//  PasswordViewModel.swift
 //  Passwords
 //
 //  Created by Gustavo Soré on 19/03/25.
@@ -10,16 +10,21 @@ import SwiftUI
 import LocalAuthentication
 import SwiftData
 
-class PasswordRegisterViewModel: ObservableObject {
+class PasswordViewModel: ObservableObject {
     @Published var decryptedPassword: String?
     @Published var showPassword = false
     @Published var authenticationError = false
     @Published var selectedFolder: Folder?
     @Published var copied = false
     private let record: Password
+    private let storageWorker: SecureStorageWorkerProtocol
 
-    init(record: Password) {
+    init(
+        record: Password,
+        storageWorker: SecureStorageWorkerProtocol = SecureStorageWorker()
+    ) {
         self.record = record
+        self.storageWorker = storageWorker
         self.selectedFolder = record.folder
     }
 
@@ -52,9 +57,9 @@ class PasswordRegisterViewModel: ObservableObject {
     private func decryptPassword() {
         Task {
             do {
-                // Simulando a senha descriptografada
+                let decriptedPassword = try storageWorker.decryptPassword(record.encryptedPassword)
                 DispatchQueue.main.async {
-                    self.decryptedPassword = "1234554321"
+                    self.decryptedPassword = decriptedPassword
                     self.showPassword = true
                 }
             } catch {
