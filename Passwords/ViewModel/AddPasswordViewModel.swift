@@ -82,7 +82,7 @@ class AddPasswordViewModel: ObservableObject {
         Task {
             do {
                 let encripted = try storageWorker.encryptPassword(password)
-                let newPassword = Password(domain: domain, email: email, username: username, encryptedPassword: encripted, folder: selectedFolder)
+                let newPassword = Password(domain: domain, email: email, encryptedPassword: encripted, folder: selectedFolder)
                 
                 context.insert(newPassword)
                 try context.save()

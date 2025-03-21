@@ -24,7 +24,7 @@ class PasswordRegisterViewModel: ObservableObject {
     }
 
     var domain: String { record.domain }
-    var username: String { record.username }
+    var username: String { record.email }
     var createdAt: String { record.createdAt.formatted(date: .long, time: .shortened) }
     var accessHistory: [Date] { record.accessHistory }
 
