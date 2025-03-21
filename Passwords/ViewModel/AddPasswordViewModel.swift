@@ -11,6 +11,9 @@ class AddPasswordViewModel: ObservableObject {
     @Binding var selectedPassword: Password?
     @Binding var createNewPassword: Bool
     @Published var folders: [Folder] = []
+    @Published var domainError: String?
+    @Published var emailError: String?
+    @Published var passwordError: String?
     private let storageWorker: SecureStorageWorkerProtocol
     
     init(
@@ -31,13 +34,51 @@ class AddPasswordViewModel: ObservableObject {
         let descriptor = FetchDescriptor<Folder>()
         do {
             folders = try context.fetch(descriptor)
-            print("Pastas carregadas na init: \(folders.map { $0.name })")
+            print("Folders loaded in init: \(folders.map { $0.name })")
         } catch {
-            print("Erro ao buscar pastas: \(error)")
+            print("Error fetching folders: \(error)")
         }
     }
     
+    func validateFields() -> Bool {
+        var isValid = true
+        
+        if domain.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            domainError = "Domain cannot be empty."
+            isValid = false
+        } else {
+            domainError = nil
+        }
+        
+        if email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            emailError = "Email cannot be empty."
+            isValid = false
+        } else if !isValidEmail(email) {
+            emailError = "Invalid email format."
+            isValid = false
+        } else {
+            emailError = nil
+        }
+        
+        if password.isEmpty {
+            passwordError = "Password cannot be empty."
+            isValid = false
+        } else {
+            passwordError = nil
+        }
+        
+        return isValid
+    }
+    
+    func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: email)
+    }
+    
     func savePassword(_ context: ModelContext) {
+        guard validateFields() else { return }
+        
         Task {
             do {
                 let encripted = try storageWorker.encryptPassword(password)
