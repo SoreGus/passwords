@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Security
 
 class AddPasswordViewModel: ObservableObject {
     
@@ -94,5 +95,12 @@ class AddPasswordViewModel: ObservableObject {
                 print(error)
             }
         }
+    }
+    
+    func generateSecurePassword(length: Int = 16) {
+        var generatedPassword = "\(UUID().uuidString.prefix(length).description)\(UUID().uuidString.prefix(length).description)"
+        generatedPassword = generatedPassword.lowercased()
+        generatedPassword = generatedPassword.replacingOccurrences(of: "-", with: "")
+        password = generatedPassword
     }
 }

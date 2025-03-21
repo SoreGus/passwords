@@ -6,6 +6,7 @@ struct AddPasswordView: View {
     @Environment(\.dismiss) private var dismiss
     
     @ObservedObject var viewModel: AddPasswordViewModel
+    @State private var showPassword = false
     
     var body: some View {
         Form {
@@ -24,11 +25,27 @@ struct AddPasswordView: View {
                         .font(.caption)
                 }
 
-                SecureField("Password", text: $viewModel.password)
+                HStack {
+                    if showPassword {
+                        TextField("Password", text: $viewModel.password)
+                    } else {
+                        SecureField("Password", text: $viewModel.password)
+                    }
+                    Button(action: {
+                        showPassword.toggle()
+                    }) {
+                        Image(systemName: showPassword ? "eye.slash" : "eye")
+                            .foregroundColor(.gray)
+                    }
+                }
                 if let passwordError = viewModel.passwordError {
                     Text(passwordError)
                         .foregroundColor(.red)
                         .font(.caption)
+                }
+                
+                Button("Generate Password") {
+                    viewModel.generateSecurePassword()
                 }
             }
             
