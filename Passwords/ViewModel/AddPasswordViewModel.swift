@@ -83,10 +83,16 @@ class AddPasswordViewModel: ObservableObject {
         Task {
             do {
                 let encripted = try storageWorker.encryptPassword(password)
-                let newPassword = Password(domain: domain, email: email, encryptedPassword: encripted, folder: selectedFolder)
                 
-                context.insert(newPassword)
+                let newPassword = Password(
+                    domain: domain,
+                    email: email,
+                    encryptedPassword: encripted,
+                    folder: selectedFolder
+                )
+                
                 try context.save()
+                
                 DispatchQueue.main.async {
                     self.selectedPassword = newPassword
                     self.createNewPassword = false
