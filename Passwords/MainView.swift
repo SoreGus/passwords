@@ -50,7 +50,9 @@ struct MainView: View {
                     AddPasswordView(
                         viewModel: AddPasswordViewModel.init(
                             context: modelContext,
-                            selectedfolder: selectedFolder
+                            selectedfolder: selectedFolder,
+                            selectedPassword: $selectedPassword,
+                            createNewPassword: $createNewPassword
                         )
                     )
                     .onAppear { columnVisibility = .doubleColumn }

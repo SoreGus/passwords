@@ -8,16 +8,22 @@ class AddPasswordViewModel: ObservableObject {
     @Published var username = ""
     @Published var password = ""
     @Published var selectedFolder: Folder?
+    @Binding var selectedPassword: Password?
+    @Binding var createNewPassword: Bool
     @Published var folders: [Folder] = []
     private let storageWorker: SecureStorageWorkerProtocol
     
     init(
         context: ModelContext,
         selectedfolder: Folder?,
+        selectedPassword: Binding<Password?>,
+        createNewPassword: Binding<Bool>,
         storageWorker: SecureStorageWorkerProtocol = SecureStorageWorker()
     ) {
         self.selectedFolder = selectedfolder
         self.storageWorker = storageWorker
+        self._createNewPassword = createNewPassword
+        self._selectedPassword = selectedPassword
         fetchFolders(context)
     }
     
@@ -35,10 +41,14 @@ class AddPasswordViewModel: ObservableObject {
         Task {
             do {
                 let encripted = try storageWorker.encryptPassword(password)
-                let newRecord = Password(domain: domain, email: email, username: username, encryptedPassword: encripted, folder: selectedFolder)
+                let newPassword = Password(domain: domain, email: email, username: username, encryptedPassword: encripted, folder: selectedFolder)
                 
-                context.insert(newRecord)
+                context.insert(newPassword)
                 try context.save()
+                DispatchQueue.main.async {
+                    self.selectedPassword = newPassword
+                    self.createNewPassword = false
+                }
             } catch {
                 print(error)
             }
