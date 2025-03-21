@@ -22,7 +22,7 @@ Xcode version 16.2
 The app uses the MVVM pattern with SwiftUI and SwiftData.  
 It also uses **NavigationSplitView** for hierarchical view organization.
 
-## Improvements
+## Future Improvements
 
 - Remove all Bindings and use only `@Published` properties or other alternatives  
 - Add unit tests  
