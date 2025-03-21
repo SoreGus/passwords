@@ -65,10 +65,17 @@ class FolderListViewModel: ObservableObject {
     
     func deleteConfirmed(_ context: ModelContext) {
         guard let folder = selectedFolder else { return }
-        deleteFolder(folder, context)
-        DispatchQueue.main.async {
-            self.selectedFolder = nil
-            self.showAlert = false
+        
+        context.delete(folder) // Isso já remove em cascata se o modelo estiver configurado corretamente
+        do {
+            try context.save()
+            DispatchQueue.main.async {
+                self.selectedFolder = nil
+                self.showAlert = false
+                self.folders.removeAll { $0.id == folder.id }
+            }
+        } catch {
+            print("Error deleting folder: \(error)")
         }
     }
 }
