@@ -59,7 +59,12 @@ struct MainView: View {
                 } else if createNewFolder {
                     AddFolderView(viewModel: .init())
                 } else if let selectedPassword = selectedPassword {
-                    PasswordView(viewModel: .init(record: selectedPassword))
+                    PasswordView(
+                        viewModel: .init(
+                            record: selectedPassword,
+                            selectedPassword: $selectedPassword
+                        )
+                    )
                 } else {
                     Text("Select a password to view details")
                         .foregroundColor(.gray)

@@ -5,7 +5,6 @@
 //  Created by Gustavo Soré on 19/03/25.
 //
 
-
 import SwiftUI
 import LocalAuthentication
 import SwiftData
@@ -16,15 +15,20 @@ class PasswordViewModel: ObservableObject {
     @Published var authenticationError = false
     @Published var selectedFolder: Folder?
     @Published var copied = false
-    private let record: Password
+    @Published var showDeleteConfirmation = false
+    @Published var deletionFinished = false
+    let record: Password
+    @Binding var selectedPassword: Password?
     private let storageWorker: SecureStorageWorkerProtocol
 
     init(
         record: Password,
+        selectedPassword: Binding<Password?>,
         storageWorker: SecureStorageWorkerProtocol = SecureStorageWorker()
     ) {
         self.record = record
         self.storageWorker = storageWorker
+        _selectedPassword = selectedPassword
         self.selectedFolder = record.folder
     }
 
@@ -80,5 +84,12 @@ class PasswordViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             self.copied = false
         }
+    }
+
+    func delete(modelContext: ModelContext) {
+        modelContext.delete(record)
+        try? modelContext.save()
+        deletionFinished = true
+        selectedPassword = nil
     }
 }

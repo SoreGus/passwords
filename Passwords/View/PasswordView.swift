@@ -65,8 +65,22 @@ struct PasswordView: View {
                     }
                 }
             }
+            
+            Section {
+                Button(role: .destructive) {
+                    viewModel.showDeleteConfirmation = true
+                } label: {
+                    Text("Delete Password")
+                }
+            }
         }
         .navigationTitle("Password Details")
+        .alert("Are you sure you want to delete this password?", isPresented: $viewModel.showDeleteConfirmation) {
+            Button("Delete", role: .destructive) {
+                viewModel.delete(modelContext: modelContext)
+            }
+            Button("Cancel", role: .cancel) {}
+        }
         .alert("Authentication Failed", isPresented: $viewModel.authenticationError) {
             Button("OK", role: .cancel) {}
         }
