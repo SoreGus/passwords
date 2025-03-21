@@ -1,29 +1,29 @@
+# Password Application for Apple Devices
 
-# Password Application for Apple
+This application is a simple password manager that runs on macOS and iPadOS.
 
-This application implements a simples password register application. It runs on Mac and iPad OS. 
+## Requirements
 
-## Requeriments
+You must sign the application with a valid Apple Developer account to build and run it properly.
 
-Must assign the application with some Apple developer account to build and make the app work corretly.
+### Supported Devices
 
-### Device
+| Device            | OS Version          |
+|-------------------|---------------------|
+| Mac with Apple Silicon | macOS 15.3.1 or later |
+| iPad              | iPadOS 18.2 or later |
 
-| Device       | OS |
-|------------|-------|
-| Mac Apple Silicon   | MacOS 15.3.1 or later    |
-| iPad        | iPadOS 18.2 or later    |
+### Xcode
 
-### XCode
+Xcode version 16.2
 
-Version 16.2
+## Architecture
 
-## Archtecture
+The app uses the MVVM pattern with SwiftUI and SwiftData.  
+It also uses **NavigationSplitView** for hierarchical view organization.
 
-Using MVVM with SwiftUI and SwiftData. **NavigationSplitViewController** for view hierarquy and organization.
+## Improvements
 
-## Melhorias
-
-- Remove all Bindings and use only Publisheds or other solution
-- Create Unit Tests
-- Add the time of all password access
+- Remove all Bindings and use only `@Published` properties or other alternatives  
+- Add unit tests  
+- Include timestamp for each password access
